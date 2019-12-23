@@ -1,0 +1,130 @@
+---
+title: "Clustering"
+author: "Prashant Prabhu Kariyannavar(@pkariya1)"
+date: "11/29/2019"
+output: html_document
+---
+
+
+
+
+```{r, warning=FALSE}
+#importing libraries which are necessary
+library(impute)
+library(caret)
+library(e1071)
+library(cluster)
+
+#input the data here
+waterTreatmentData <- read.csv("E:/assignment2/water-treatment.data", header = F)
+#Remove the first column (day of the data)
+waterTreatmentData$V1 = NULL
+
+
+
+# renaming columns
+colnames(waterTreatmentData) = c("Q_E", "ZN_E", "PH_E", "DBO_E", "DQO_E", "SS_E",
+                              "SSV_E", "SED_E", "COND_E", "PH_P", "DBO_P", "SS_P", "SSV_P", "SED_P", "COND_P",
+                              "PH_D", "DBO_D", "DQO_D", "SS_D", "SSV_D", "SED_D", "COND_D", "PH_S", "DBO_S",
+                              "DQO_S", "SS_S", "SSV_S", "SED_S", "COND_S", "RD_DBO_P", "RD_SS_P", "RD_SED_P",
+                              "RD_DBO_S", "RD_DQO_S", "RD_DBO_G", "RD_DQO_G", "RD_SS_G", "RD_SED_G")
+
+
+
+apply(waterTreatmentData, 2, class)
+
+# attributes are numeric and continuous so converting character variable to numeric
+waterTreatmentData.num = apply(waterTreatmentData, 2, as.numeric)
+
+
+#handling the missing values
+rseed = 2394 # for reproducibility.
+# Note: impute.knn requires a matrix as input data
+waterTreatmentData.p = impute.knn(waterTreatmentData.num, rng.seed = rseed)
+# Retrieve imputed matrix from list object
+waterTreatmentData.imputed = as.data.frame(waterTreatmentData.p$data)
+
+
+#remove variables which are near to zero
+nearZeroVar(waterTreatmentData.imputed)
+
+#summary of imputed Data
+summary(waterTreatmentData.imputed)
+
+
+
+#checking the skewness
+sk_ind = apply(waterTreatmentData.imputed, 2, skewness)
+sort(sk_ind)
+
+par(mfrow = c(2, 2))
+hist(waterTreatmentData.imputed$RD_SED_G)
+hist(waterTreatmentData.imputed$RD_DBO_S)
+hist(waterTreatmentData.imputed$RD_DBO_P)
+hist(waterTreatmentData.imputed$SED_S)
+
+# Applying transformations before applying Clustering
+#The FastTrack function
+trans = preProcess(as.data.frame(waterTreatmentData.num), method = c("BoxCox",
+                                                                  "center", "scale", "knnImpute"), k = 10)
+waterTreatmentData.transf = predict(trans, as.data.frame(waterTreatmentData.num))
+#elbow graph method
+# Determine number of clusters (here i set the range of upto 50 clusters)
+wss <- (nrow(waterTreatmentData.transf)-1)*sum(apply(waterTreatmentData.transf,2,var))
+for (i in 1:50) wss[i] <- sum(kmeans(waterTreatmentData.transf,
+                                     centers=i)$withinss)
+plot(1:50, wss, type="b",main="Elbow Graph", xlab="Number of Clusters",
+     ylab="Within groups sum of squares")
+
+
+# Looking at above Elbow Graph we can say that k is between 3 to 9
+
+# Ward Hierarchical Clustering
+
+data1 = dist(waterTreatmentData.transf, method = "euclidean")  # distance matrix
+fit1 = hclust(data1, method = "ward")
+plot(fit1, labels = FALSE)  # display dendogram
+par(mfrow = c(2, 2))
+plot(fit1, labels = FALSE)
+rect.hclust(fit1, k = 3, border = "red")
+plot(fit1, labels = FALSE)
+rect.hclust(fit1, k = 4, border = "green")
+plot(fit1, labels = FALSE)
+rect.hclust(fit1, k = 5, border = "blue")
+
+
+#determing optimal k value by using NbClust package.
+library(NbClust)
+nb <- NbClust(waterTreatmentData.transf, distance = "euclidean", min.nc = 2,
+        max.nc = 10, method = "complete", index ="all")
+
+
+# Visualize the result
+library(factoextra)
+fviz_nbclust(nb) + theme_minimal()
+
+
+#validation measures
+library(clValid)
+intern = clValid(waterTreatmentData.transf, 3:8, clMethods = c("hierarchical",
+                                                            "kmeans", "pam"), validation = "internal")
+
+summary(intern)
+
+#By looking at the above validation I applying k means algorithm for 3 clusters.
+results<-kmeans(waterTreatmentData.transf,3)
+results
+
+#representation of clusters
+clusplot(waterTreatmentData.transf,results$cluster,main="2D representation",shade = TRUE,labels = 2,lines = 0)
+
+#cluster output of each data
+results$cluster
+#printing out the values of each index to which cluster it belongs
+i<- 0
+for (val in results$cluster) {
+  i<- i+1
+  print(paste(i, "->",val))
+}
+
+```
