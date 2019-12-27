@@ -2,7 +2,7 @@
 
 This project focuses on clustering study, and in particular, the well-known k-means method. The associated data file is named as water-treatment.data, and the documentation file for this data set is given in the file named water-treatment-dataDescription.txt. Specifically, there are 527 data items and each of them is a 38-dimensional vector. Please note that each attribute (i.e., dimension) has a different range of the values. Also please note that there are missing values.
 
-Steps followed in determining the Cluster by using the R programming language:
+Steps followed in determining the Cluster and applied k means algorithm using the R programming language:
 
 Data Cleaning and Preparation:- 
 * In the data set given, the first element of each is day of the data and rest are attribute values. I am removing the first element for all elements i.e. pointing it to null. i.e.waterTreatmentData$V1 = NULL 
