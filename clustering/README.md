@@ -8,7 +8,7 @@ Data Cleaning and Preparation:-
 * In the data set given, the first element of each is day of the data and rest are attribute values. I am removing the first element for all elements i.e. pointing it to null. i.e.waterTreatmentData$V1 = NULL 
 * Renamed the column names. 
 * Here in order to handle the missing values I am using impute.knn package in R i.e. A function to impute missing expression data, using nearest neighbor averaging. 
-* Removing the variables with low variability by using caret package. • Apply summary function to get statistics summary. • Checking the Skewness of the data, some variables are badly skewed. 
+* Removing the variables with low variability by using caret package. * Apply summary function to get statistics summary. * Checking the Skewness of the data, some variables are badly skewed. 
 * Before applying Clustering applying fastTrack using caret package. It uses the preprocess function to apply Boxcox , Center & scale and imputation all in one go.
 
 Determining the K value :- 
