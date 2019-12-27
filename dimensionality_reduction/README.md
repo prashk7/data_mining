@@ -8,3 +8,6 @@ The datasets given are dist1_500_1.txt, dist1_500_2.txt and dist2_500_1.txt, dis
 
 ### Implemented PCA and DCT on both the Data sets and observerd the result.
 
+### Conclusion:
+According to my observation, DCT is better feature extraction because after applying DCT function to dataSet1 and dataSet2 with less co-efficients we can restore the data by using function (IDCT).
+
