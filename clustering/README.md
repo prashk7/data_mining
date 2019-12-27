@@ -4,7 +4,7 @@ Steps followed:
 
 1.	Data Cleaning and Preparation
 •	In the data set given, the first element of each is day of the data and rest are attribute values. I am removing the first element for all elements i.e. pointing it to null. 
-waterTreatmentData$V1 = NULL
+i.e.waterTreatmentData$V1 = NULL
 •	Renaming the column names
 •	Here in order to handle the missing values I am using impute.knn package in R i.e. A function to impute missing expression data, using nearest neighbor averaging.
 •	Removing the variables with low variability by using caret package.
