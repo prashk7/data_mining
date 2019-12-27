@@ -1,1 +1,1 @@
-
+This project focuses on clustering study, and in particular, the well-known k-means method. The associated data file is named as water-treatment.data, and the documentation file for this data set is given in the file named water-treatment-dataDescription.txt. Specifically, there are 527 data items and each of them is a 38-dimensional vector. Please note that each attribute (i.e., dimension) has a different range of the values. Also please note that there are missing values.
